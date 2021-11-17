@@ -1,8 +1,14 @@
 <template>
   <div class="nav-bar">
-    <slot name="left"></slot>
-    <slot name="center"></slot>
-    <slot name="right"></slot>
+    <div  class="left">
+      <slot name="left"></slot>
+    </div>
+    <div class="center">
+      <slot name="center"></slot>
+    </div>
+    <div class="right">
+      <slot name="right"></slot>
+    </div>
   </div>
 </template>
 
@@ -17,6 +23,7 @@ export default {
   display: flex;
   height: 44px;
   line-height: 44px;
+  text-align: center;
 }
 .left,
 .right {

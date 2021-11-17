@@ -1,20 +1,23 @@
 <template>
   <div>
-    <nav-bar></nav-bar>
+    <nav-bar class="nav-bar">
+      <template #center>蘑菇街</template>
+    </nav-bar>
   </div>
 </template>
 
 <script>
 import NavBar from 'components/common/navbar/NavBar.vue'
+
 export default {
-  name: 'Home',
-  components: {
-    NavBar
-  }
+  components: { NavBar },
+
 }
 </script>
 
-<style>
-
-
-NavBar</style>
+<style scoped>
+.nav-bar {
+  color: #fff;
+  background: var(--color-tint);
+}
+</style>>
