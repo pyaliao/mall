@@ -5,7 +5,7 @@ module.exports = {
   chainWebpack: config => {
     config.resolve.alias
       .set('assets', '@/assets')
-      .set('common', '@/assets')
+      .set('common', '@/common')
       .set('components', '@/components')
       .set('views', '@/views')
       .set('network', '@/network')
