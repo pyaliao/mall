@@ -15,7 +15,7 @@ export default {
     path: String,
     activeColor: {
       type: String,
-      default: '#B81C22'
+      default: '#ff8198'
     }
   },
   data () {
@@ -39,7 +39,7 @@ export default {
   },
   methods: {
     itemClick () {
-      console.log('被点击了---------', this.path)
+      // console.log('被点击了---------', this.path)
       if (this.$route.path === this.path) {
 
       } else {
@@ -63,7 +63,7 @@ export default {
   font-size: 14px;
   color:#333;
 }
-.tab-bar-item .title.active  {
-  color: #B81C22;
-}
+/* .tab-bar-item .title.active  {
+  color: var(--color-tint);
+} */
 </style>

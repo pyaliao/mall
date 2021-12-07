@@ -1,4 +1,3 @@
-
 module.exports = {
   // 链式配置适用于webpack2-4
   // 配置resolve中的别名

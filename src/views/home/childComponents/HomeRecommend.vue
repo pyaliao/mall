@@ -27,7 +27,17 @@ export default {
   .recommed {
       display: flex;
       justify-content: space-evenly;
-      margin: 10px 0;
+      padding: 10px 0 30px;
+      position: relative;
+  }
+  .recommed::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    height: 10px;
+    background-color: #e7e7e7;
   }
   .item {
     width: 20%;

@@ -1,9 +1,9 @@
 // 因为package.json中默认的type类型为commonjs，因此想使用ES6模块语法则需要将type设置为module
-// import axios from 'axios'
+import axios from 'axios'
 // 故在此使用require导入模块
-const axios = require('axios')
+// const axios = require('axios')
 
-export function request(config) {
+export function request (config) {
   // 1. 创建axios实例
   const instance = axios.create({
     baseURL: 'http://123.207.32.32:8000',
