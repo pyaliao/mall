@@ -29,6 +29,7 @@ export default {
   methods: {
     clickItem (index) {
       this.currentIndex = index
+      this.$emit('changeTab', index)
     }
   }
 }
@@ -43,6 +44,10 @@ export default {
   font-size: 15px;
   text-align: center;
   position: sticky;
+  left: 0;
+  top: 0;
+  background: #fff;
+  z-index: 1000;
 }
 .tabControlItem {
   flex: 1;
