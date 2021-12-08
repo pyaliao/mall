@@ -1,15 +1,18 @@
 <template>
+  
   <div class="homeBox">
     <nav-bar class="nav-bar-home">
       <template #center>蘑菇街</template>
     </nav-bar>
-    <scroll class="homeScroll">
+    <scroll class="homeScroll" ref="homeScroll"> 
       <home-swiper :banner="banner"></home-swiper>
       <home-recommend :recommend="recommend"></home-recommend>
       <home-feature></home-feature>
       <tab-control :titles="titles" @changeTab="changeTab"></tab-control>
-        <goods-list :goods-list="currentGoodsList"></goods-list>
+      <goods-list :goods-list="currentGoodsList"></goods-list>
     </scroll>
+    
+    <back-top-btn @click.native="backTop" ></back-top-btn>
   </div>
 </template>
 
@@ -18,6 +21,7 @@ import NavBar from 'components/common/navbar/NavBar.vue'
 import Scroll from 'components/common/scroll/Scroll.vue'
 import TabControl from 'components/content/tabControl/TabControl.vue'
 import GoodsList from 'components/content/goodsList/GoodsList.vue'
+import BackTopBtn from 'components/content/backTopBtn/BackTopBtn.vue'
 
 import HomeSwiper from './childComponents/HomeSwiper.vue'
 import HomeRecommend from "./childComponents/HomeRecommend.vue"
@@ -36,6 +40,7 @@ export default {
     Scroll,
     TabControl,
     GoodsList,
+    BackTopBtn,
     HomeSwiper,
     HomeRecommend,
     HomeFeature,
@@ -59,7 +64,8 @@ export default {
           list: []
         }
       },
-      currentType: 'pop'
+      currentType: 'pop',
+      isrefresh: false
     }
   },
   computed: {
@@ -75,7 +81,7 @@ export default {
 
   },
   mounted () {
-
+    // this.isrefresh = true
   },
   methods: {
     getHomeData () {
@@ -92,7 +98,9 @@ export default {
       getGoodsData(type, page)
       .then(res => {
         console.log(res)
-        this.goods[type].list = res.data.list
+        // this.goods[type].list = this.goods[type].list.concat(res.data.list)
+        this.goods[type].list.push(...res.data.list)
+        this.goods[type].page = page
       })
       .catch()
     },
@@ -111,6 +119,9 @@ export default {
         default:
           break;
       }
+    },
+    backTop () {
+      this.$refs.homeScroll.scrollTo(0, 0, 300)
     }
   }
 }
@@ -118,11 +129,14 @@ export default {
 
 <style scoped>
 .homeBox {
-  /* height: 100%; */
+  height: 100vh;
 }
 .homeScroll {
-  /* height: calc(100% - 93px); */
-  /* overflow: auto; */
+  /* better-scroll必须定位 */
+  position: relative;
+  overflow: hidden;
+  /* better-scroll的必须给定一个确定的高度 */
+  height: calc(100% - 93px);
 }
 .nav-bar-home {
   color: #fff;
