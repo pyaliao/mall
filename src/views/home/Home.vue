@@ -4,6 +4,12 @@
     <nav-bar class="nav-bar-home">
       <template #center>蘑菇街</template>
     </nav-bar>
+    <tab-control :titles="titles" 
+                class="topTabControl" 
+                @changeTab="changeTab" 
+                ref="topTabControl"
+                v-show="isFixed" >
+    </tab-control>
     <scroll class="homeScroll"
             ref="homeScroll"
             :probe-type="3"
@@ -11,11 +17,13 @@
             :pullup="true"
             :content-data="currentGoodsList"
             @scroll="contentScroll"
-            @pullupload="loadMore" >
-      <home-swiper :banner="banner"></home-swiper>
+            @pullupload="loadMore"
+            >
+      
+      <home-swiper :banner="banner" @swiperImgLoad="swiperImgLoad" ></home-swiper>
       <home-recommend :recommend="recommend"></home-recommend>
       <home-feature></home-feature>
-      <tab-control :titles="titles" @changeTab="changeTab"></tab-control>
+      <tab-control :titles="titles" @changeTab="changeTab" ref="tabControl"></tab-control>
       <goods-list :goods-list="currentGoodsList"></goods-list>
     </scroll>
 
@@ -37,8 +45,7 @@ import HomeFeature from './childComponents/HomeFeature'
 
 import { getHomeData } from 'network/home.js'
 import { getGoodsData } from 'network/home.js'
-import func from 'vue-editor-bridge'
-
+import { debounce } from 'common/utils.js'
 
 
 
@@ -73,8 +80,10 @@ export default {
         }
       },
       currentType: 'pop',
-      isrefresh: false,
-      showBackTopBtn: false
+      showBackTopBtn: false,
+      tabControlOffsetTop: 0,
+      isFixed: false,
+      savedY: 0
     }
   },
   computed: {
@@ -87,32 +96,27 @@ export default {
     this.getGoodsData('pop')
     this.getGoodsData('new')
     this.getGoodsData('sell')
-    // 监听goodsItem中图片加载完成，因为是非父子组件传值，所以用的事件总线
-    // 每一张图片加载完成都会触发一次这个事件，因此在此进行防抖处理
-    this.$bus.$on('imgloaded', (e) => {
-      console.log('dcccccccccccccccccccc')
-      this.$refs.homeScroll.refresh()
-    })
   },
   mounted () {
-    // this.isrefresh = true
+    // 监听goodsItem中图片加载完成，因为是非父子组件传值，所以用的事件总线
+    // 每一张图片加载完成都会触发一次这个事件，因此在此进行防抖处理
+    const refreshBS = debounce(this.$refs.homeScroll.refresh, 200)
+    this.$bus.$on('imgloaded', (e) => {
+      refreshBS()
+    })
+  },
+  activated () {
+    this.$refs.homeScroll.scrollTo(0, this.savedY, 0)
+    this.$refs.homeScroll.refresh()
+  },
+  deactivated () {
+    this.savedY = this.$refs.homeScroll.getScrollY()
   },
   methods: {
-    debounce (func, delay) {
-      let timer = null
-      return function (arguments) {
-        if (timer) {
-          clearTimeout(timer)
-        }
-        timer = setTimeout(() => {
-          func.apply(this, arguments)
-        }, delay)
-      }
-    },
     getHomeData () {
       getHomeData()
       .then(res => {
-        console.log(res)
+        // console.log(res)
         this.banner = res.data.banner.list
         this.recommend = res.data.recommend.list
       })
@@ -122,8 +126,7 @@ export default {
       const page = this.goods[type].page + 1
       getGoodsData(type, page)
       .then(res => {
-        console.log(res)
-        // this.goods[type].list = this.goods[type].list.concat(res.data.list)
+        // console.log(res)
         this.goods[type].list.push(...res.data.list)
         this.goods[type].page = page
       })
@@ -132,7 +135,6 @@ export default {
       })
     },
     changeTab (index) {
-      console.log(index)
       switch (index) {
         case 0:
           this.currentType = 'pop'
@@ -146,16 +148,31 @@ export default {
         default:
           break;
       }
+      this.$refs.topTabControl.currentIndex = index
+      this.$refs.tabControl.currentIndex = index
     },
     backTop () {
       this.$refs.homeScroll.scrollTo(0, 0, 300)
     },
     contentScroll (pos) {
-      console.log(pos)
+
+      // 1. 显示或者隐藏返回顶部按钮
       this.showBackTopBtn = Math.abs(pos.y) >= 1000 ? true : false
+
+      // 2. 滚动距离大于一定距离就让tabControl吸顶
+      this.isFixed = Math.abs(pos.y) >= this.tabControlOffsetTop ? true : false
+
     },
     loadMore () {
       this.getGoodsData(this.currentType)
+    },
+    getTabControlOffsetTop () {
+      this.tabControlOffsetTop = this.$refs.tabControl.$el.offsetTop
+      console.log(this.tabControlOffsetTop)
+    },
+    swiperImgLoad () {
+      console.log('jinlail')
+      this.getTabControlOffsetTop()
     }
   }
 }
@@ -179,5 +196,11 @@ export default {
   top: 0;
   left: 0;
   z-index: 1000;
+}
+.topTabControl {
+  position: fixed;
+  width: 100%;
+  top: 44px;
+  left: 0;
 }
 </style>>

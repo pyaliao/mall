@@ -43,7 +43,7 @@ export default {
   line-height: 40px;
   font-size: 15px;
   text-align: center;
-  position: sticky;
+  position: relative;
   left: 0;
   top: 0;
   background: #fff;

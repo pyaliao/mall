@@ -133,14 +133,18 @@ export default {
         })
       }
     },
-    scrollTo() {
+    scrollTo(...args) {
       // 代理better-scroll的scrollTo方法
-      this.scroll && this.scroll.scrollTo.apply(this.scroll, arguments)
+      this.scroll && this.scroll.scrollTo.apply(this.scroll, args)
     },
     refresh() {
       // 代理better-scroll的refresh方法
+      // console.log('防抖-----')
       this.scroll && this.scroll.refresh()
     },
+    getScrollY () {
+      return this.scroll ? this.scroll.y : 0
+    }
   },
   watch: {
     contentData () {
