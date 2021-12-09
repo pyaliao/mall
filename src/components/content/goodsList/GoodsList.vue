@@ -1,15 +1,15 @@
 <template>
   <div class="goodsList">
     <goods-list-item
-      v-for="goodsItem in goodsList"
+      v-for="goodsItem, index in goodsList"
       :goods-item="goodsItem"
-      :key="goodsItem.iid">
+      :key="index">
     </goods-list-item>
   </div>
 </template>
 
 <script>
-import GoodsListItem from './GoodsListItem.vue'
+import GoodsListItem from './GoodsListItem'
 
 export default {
   name: 'GoodsList',
