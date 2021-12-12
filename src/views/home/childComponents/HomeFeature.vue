@@ -1,16 +1,16 @@
 <template>
   <div class="featureBox">
-    <img src="~assets/img/home/recommend_bg.jpg" alt="">
+    <img src="~assets/img/home/recommend_bg.jpg" alt="" />
   </div>
 </template>
 
 <script>
 export default {
-  name: 'HomeFeature'
-}
+  name: "HomeFeature",
+};
 </script>
 
-<style>
+<style scoped>
 .featureBox > img {
   display: block;
   width: 100%;

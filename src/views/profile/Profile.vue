@@ -1,15 +1,10 @@
 <template>
-  <div>
-    个人中心
-  </div>
+  <div>个人中心</div>
 </template>
 
 <script>
-export default {
-
-}
+export default {};
 </script>
 
-<style>
-
+<style scoped>
 </style>

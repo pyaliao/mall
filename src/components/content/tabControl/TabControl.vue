@@ -1,41 +1,43 @@
 <template>
   <div class="tabControl">
-    <div class="tabControlItem"
-        v-for="title, index in titles"
-        :class="{active: currentIndex === index}"
-        :key="index"
-        @click="clickItem(index)">
-      <span>{{title}}</span>
+    <div
+      class="tabControlItem"
+      v-for="(title, index) in titles"
+      :class="{ active: currentIndex === index }"
+      :key="index"
+      @click="clickItem(index)"
+    >
+      <span>{{ title }}</span>
     </div>
   </div>
 </template>
 
 <script>
 export default {
-  name: 'TabControl',
-  data () {
+  name: "TabControl",
+  data() {
     return {
-      currentIndex: 0
-    }
+      currentIndex: 0,
+    };
   },
   props: {
     titles: {
       type: Array,
-      default () {
-        return ['流行', '新款', '精选']
-      }
+      default() {
+        return ["流行", "新款", "精选"];
+      },
     },
   },
   methods: {
-    clickItem (index) {
-      this.currentIndex = index
-      this.$emit('changeTab', index)
-    }
-  }
-}
+    clickItem(index) {
+      this.currentIndex = index;
+      this.$emit("changeTab", index);
+    },
+  },
+};
 </script>
 
-<style>
+<style scoped>
 .tabControl {
   display: flex;
   align-items: center;
@@ -60,13 +62,13 @@ export default {
   color: var(--color-tint);
 }
 .tabControlItem.active > span::before {
-  content: '';
+  content: "";
   position: absolute;
   left: 50%;
   bottom: 0;
   width: 80%;
   height: 3px;
   transform: translateX(-50%);
-  background-color: var( --color-tint);
+  background-color: var(--color-tint);
 }
 </style>

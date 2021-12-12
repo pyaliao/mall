@@ -1,5 +1,5 @@
 <template>
-  <div class="goodsItem">
+  <div class="goodsItem" @click="itemClick">
     <img :src="goodsItem.show.img"  @load="loadImg" alt="" srcset="">
     <div class="title">{{goodsItem.title}}</div>
     <div class="desp">
@@ -28,6 +28,13 @@ export default {
     loadImg () {
       // 非父子组件通信，事件总线
       this.$bus.$emit('imgloaded')
+    },
+    itemClick () {
+      // 点击跳转到详情页
+      // 动态路由传参有两种方法
+      // 1. 使用命名路由，params（使用path不起作用）：router.push({ name: 'user', params: { userId: '123' }})
+      // 2. 使用带有完整参数的path，即拼接字符串即可：router.push({ path: `/user/${userId}`})
+      this.$router.push(`/detail/${this.goodsItem.iid}`)
     }
   }
 }

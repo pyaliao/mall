@@ -2,7 +2,7 @@
   <div class="tab-bar-item" @click="itemClick">
     <slot v-if="!isActive" name="icon"></slot>
     <slot v-else name="icon-active"></slot>
-    <div  :style="activeTitleStyle" class="title">
+    <div :style="activeTitleStyle" class="title">
       <slot name="title"></slot>
     </div>
   </div>
@@ -10,48 +10,47 @@
 
 <script>
 export default {
-  name: 'TabBarItem',
+  name: "TabBarItem",
   props: {
     path: String,
     activeColor: {
       type: String,
-      default: '#ff8198'
-    }
+      default: "#ff8198",
+    },
   },
-  data () {
+  data() {
     return {
       // isActive: false
-    }
+    };
   },
   computed: {
     isActive: {
-      get () {
-        return this.$route.path.indexOf(this.path) !== -1
+      get() {
+        return this.$route.path.indexOf(this.path) !== -1;
       },
-      set () {}
+      set() {},
     },
     activeTitleStyle: {
-      get () {
-        return this.isActive ? { color: this.activeColor } : {}
+      get() {
+        return this.isActive ? { color: this.activeColor } : {};
       },
-      set () {}
-    }
+      set() {},
+    },
   },
   methods: {
-    itemClick () {
+    itemClick() {
       // console.log('被点击了---------', this.path)
       if (this.$route.path === this.path) {
-
       } else {
-        this.$router.replace(this.path)
-        this.isActive = true
+        this.$router.replace(this.path);
+        this.isActive = true;
       }
-    }
-  }
-}
+    },
+  },
+};
 </script>
 
-<style>
+<style scoped>
 .tab-bar-item {
   flex: 1;
 }
@@ -61,7 +60,7 @@ export default {
 }
 .tab-bar-item .title {
   font-size: 14px;
-  color:#333;
+  color: #333;
 }
 /* .tab-bar-item .title.active  {
   color: var(--color-tint);

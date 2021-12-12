@@ -5,16 +5,13 @@
 </template>
 
 <script>
-
 export default {
-  name: 'TabBar',
-  components: {
-
-  }
-}
+  name: "TabBar",
+  components: {},
+};
 </script>
 
-<style>
+<style scoped>
 .tab-bar {
   height: 49px;
   text-align: center;
@@ -24,8 +21,7 @@ export default {
   left: 0;
   right: 0;
   background: rgb(245 245 245);
-  box-shadow: 0 0px 10px 1px rgba(0, 0, 0, .1);
+  box-shadow: 0 0px 10px 1px rgba(0, 0, 0, 0.1);
   align-items: center;
 }
-
 </style>
