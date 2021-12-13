@@ -1,6 +1,6 @@
 <template>
   <div class="goodsItem" @click="itemClick">
-    <img :src="goodsItem.show.img"  @load="loadImg" alt="" srcset="">
+    <img :src="showImg"  @load="loadImg" alt="" srcset="">
     <div class="title">{{goodsItem.title}}</div>
     <div class="desp">
       <span class="price">{{goodsItem.price}}</span>
@@ -24,10 +24,16 @@ export default {
       }
     }
   },
+  computed: {
+    showImg () {
+      // 必须判断一下show是否存在，否则从undefined直接取之会报错，程序直接退出
+      return this.goodsItem.show ? this.goodsItem.show.img : this.goodsItem.image
+    }
+  },
   methods:  {
     loadImg () {
       // 非父子组件通信，事件总线
-      this.$bus.$emit('imgloaded')
+      this.$bus.$emit('imgLoaded')
     },
     itemClick () {
       // 点击跳转到详情页

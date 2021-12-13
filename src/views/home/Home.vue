@@ -43,9 +43,9 @@ import HomeRecommend from "./childComponents/HomeRecommend"
 import HomeFeature from './childComponents/HomeFeature'
 
 
-import { getHomeData } from 'network/home.js'
-import { getGoodsData } from 'network/home.js'
-import { debounce } from 'common/utils.js'
+import { getHomeData } from 'network/home'
+import { getGoodsData } from 'network/home'
+import { mixin } from 'common/mixin'
 
 
 
@@ -60,6 +60,7 @@ export default {
     HomeRecommend,
     HomeFeature,
   },
+  mixins: [mixin],
   data () {
     return {
       banner: [],
@@ -83,7 +84,9 @@ export default {
       showBackTopBtn: false,
       tabControlOffsetTop: 0,
       isFixed: false,
-      savedY: 0
+      savedY: 0,
+      scrollName: 'homeScroll',
+      msg: '首页加载图片监听---------'
     }
   },
   computed: {
@@ -98,19 +101,17 @@ export default {
     this.getGoodsData('sell')
   },
   mounted () {
-    // 监听goodsItem中图片加载完成，因为是非父子组件传值，所以用的事件总线
-    // 每一张图片加载完成都会触发一次这个事件，因此在此进行防抖处理
-    const refreshBS = debounce(this.$refs.homeScroll.refresh, 200)
-    this.$bus.$on('imgloaded', (e) => {
-      refreshBS()
-    })
   },
-  activated () {
+  activated () {  // 被keep-alive缓存的组件激活时调用
+    // 组件激活时滚动到保存的距离，然后刷新better-scroll
     this.$refs.homeScroll.scrollTo(0, this.savedY, 0)
     this.$refs.homeScroll.refresh()
   },
-  deactivated () {
+  deactivated () { // 被keep-alive缓存的组件失活时调用
+    // 组件失活时保存页面滚动的距离
     this.savedY = this.$refs.homeScroll.getScrollY()
+    // 组件失活时解除事件监听
+    this.$bus.$off('imgLoaded', this.imgLoadedHandler)
   },
   methods: {
     getHomeData () {
@@ -188,6 +189,8 @@ export default {
   overflow: hidden;
   /* better-scroll的必须给定一个确定的高度 */
   height: calc(100% - 93px);
+  /* 当触控事件发生在元素上时，不进行任何操作 */
+  touch-action: none;
 }
 .nav-bar-home {
   color: #fff;

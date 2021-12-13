@@ -1,96 +1,184 @@
 <template>
   <div class="detailBox">
-    <detail-nav-bar></detail-nav-bar>
+    <detail-nav-bar @navItemClick="navItemClick" ref="detailNavBar"></detail-nav-bar>
     <scroll
-          class="detailScroll"
-          ref="detailScroll">
-      <detail-swiper :images="topSwiperImages"></detail-swiper>
+      class="detailScroll"
+      ref="detailScroll"
+      :listenScroll="true"
+      @scroll="scroll"
+      :probe-type="3"
+    >
+      <detail-swiper ref="swiper" :images="topSwiperImages"></detail-swiper>
       <detail-goods-intro :goods="goods"></detail-goods-intro>
       <detail-shop :shop="shop"></detail-shop>
-      <detail-goods-detail :detail="detail" @imgLoad="goodsDetailImgLoad"></detail-goods-detail>
-      <detail-goods-params :params="params"></detail-goods-params>
-      <detail-comment :comment="comment"></detail-comment>
+      <detail-goods-detail
+        :detail="detail"
+        @imgLoad="goodsDetailImgLoad"
+      ></detail-goods-detail>
+      <detail-goods-params ref="params" :params="params"></detail-goods-params>
+      <detail-comment ref="comment" :comment="comment"></detail-comment>
+      <goods-list ref="recommend" :goods-list="recommend"></goods-list>
     </scroll>
   </div>
 </template>
 
 <script>
-import Scroll from 'components/common/scroll/Scroll'
+import Scroll from "components/common/scroll/Scroll";
+import GoodsList from "components/content/goodsList/GoodsList";
 
-import DetailNavBar from './childComponents/DetailNavBar'
-import DetailSwiper from './childComponents/DetailSwiper'
-import DetailGoodsIntro from './childComponents/DetailGoodsIntro'
-import DetailShop from './childComponents/DetailShop'
-import DetailGoodsDetail from './childComponents/DetailGoodsDetail'
-import DetailGoodsParams from './childComponents/DetailParams'
-import DetailComment from './childComponents/DetailComment'
+import DetailNavBar from "./childComponents/DetailNavBar";
+import DetailSwiper from "./childComponents/DetailSwiper";
+import DetailGoodsIntro from "./childComponents/DetailGoodsIntro";
+import DetailShop from "./childComponents/DetailShop";
+import DetailGoodsDetail from "./childComponents/DetailGoodsDetail";
+import DetailGoodsParams from "./childComponents/DetailParams";
+import DetailComment from "./childComponents/DetailComment";
 
-import { getDetailData, Goods, Shop, GoodsDetail, GoodsParams, GoodsComment } from 'network/detail'
+import {
+  getDetailData,
+  getDetailRecommend,
+  Goods,
+  Shop,
+  GoodsDetail,
+  GoodsParams,
+  GoodsComment,
+} from "network/detail";
+import { mixin } from "common/mixin";
+import { debounce } from "common/utils";
 
 export default {
-  name: 'Detail',
+  name: "Detail",
   components: {
     Scroll,
+    GoodsList,
     DetailNavBar,
     DetailSwiper,
     DetailGoodsIntro,
     DetailShop,
     DetailGoodsDetail,
     DetailGoodsParams,
-    DetailComment
+    DetailComment,
   },
-  data () {
+  mixins: [mixin],
+  data() {
     return {
       topSwiperImages: [],
       goods: {},
       shop: {},
       detail: {},
       params: {},
-      comment: {}
-    }
+      comment: {},
+      recommend: [],
+      navOffsetTops: [],
+      scrollName: "detailScroll",
+      getOffsetTops: null,
+      currentIndex: 0,
+      msg: "-------在详情页监听加载事件",
+    };
   },
   props: {
     iid: {
       type: String,
-      default: ''
-    }
+      default: "",
+    },
   },
-  created () {
-    // 获取
-    this.getDetailData(this.iid)
+  created() {
+    // 获取详情数据
+    this.getDetailData(this.iid);
+    // 获取推荐数据
+    this.getDetailRecommend();
+    // 防抖处理
+    this.getOffsetTops = debounce(() => {
+      this.navOffsetTops[0] = this.$refs.swiper.$el.offsetTop;
+      this.navOffsetTops[1] = this.$refs.params.$el.offsetTop;
+      this.navOffsetTops[2] = this.$refs.comment.$el.offsetTop;
+      this.navOffsetTops[3] = this.$refs.recommend.$el.offsetTop;
+      console.log(this.navOffsetTops);
+    });
+  },
+  mounted() {},
+  // 因为detail组件没有keep-alive，因此使用destroy钩子取消事件监听
+  destroyed() {
+    // 组件失活时解除事件监听
+    this.$bus.$off("imgLoaded", this.imgLoadedHandler);
   },
   methods: {
-    getDetailData (iid) {
+    getDetailData(iid) {
       getDetailData(iid)
-      .then(res => {
-        console.log(res)
-        const data = res.result
-        // 1. 获取顶部轮播图数据
-        this.topSwiperImages = data.itemInfo.topImages
+        .then((res) => {
+          // console.log(res)
+          const data = res.result;
+          // 1. 获取顶部轮播图数据
+          this.topSwiperImages = data.itemInfo.topImages;
 
-        // 2. 获取商品信息
-        this.goods = new Goods(data.itemInfo, data.columns, data.shopInfo.services)
+          // 2. 获取商品信息
+          this.goods = new Goods(
+            data.itemInfo,
+            data.columns,
+            data.shopInfo.services
+          );
 
-        // 3. 获取商家信息
-        this.shop = new Shop(data.shopInfo)
+          // 3. 获取商家信息
+          this.shop = new Shop(data.shopInfo);
 
-        // 4. 获取商品详情
-        this.detail = new GoodsDetail(data.detailInfo)
+          // 4. 获取商品详情
+          this.detail = new GoodsDetail(data.detailInfo);
 
-        // 4. 获取商品参数信息
-        this.params = new GoodsParams(data.itemParams.info, data.itemParams.rule)
+          // 4. 获取商品参数信息
+          this.params = new GoodsParams(
+            data.itemParams.info,
+            data.itemParams.rule
+          );
 
-        // 6. 获取用户评论信息
-        this.comment = new GoodsComment(data.rate)
-      })
-      .catch()
+          // 6. 获取用户评论信息
+          this.comment = new GoodsComment(data.rate);
+        })
+        .catch();
     },
-    goodsDetailImgLoad () {
+    getDetailRecommend() {
+      getDetailRecommend()
+        .then((res) => {
+          // console.log(res)
+          this.recommend = res.data.list;
+        })
+        .catch();
+    },
+    goodsDetailImgLoad() {
       // 当所有图片加载完成，再刷新better-scroll
-      this.$refs.detailScroll.refresh()
-    }
-  }
-}
+      this.$refs.detailScroll.refresh();
+      // 1. 在下次 DOM 更新循环结束之后执行延迟回调。在修改数据之后立即使用这个方法，获取更新后的 DOM。
+      // 放在数据修改之后求值依然有问题，因为虽然dom渲染完成，但是图片还没有加载完成，因此内容没有完全撑开，导致计算结果出错
+      // this.$nextTick(() => {
+      //   this.navOffsetTops[0] = this.$refs.swiper.$el.offsetTop
+      //   this.navOffsetTops[1] = this.$refs.params.$el.offsetTop
+      //   this.navOffsetTops[2] = this.$refs.comment.$el.offsetTop
+      //   this.navOffsetTops[3] = this.$refs.recommend.$el.offsetTop
+      //   console.log(this.navOffsetTops)
+      // })
+      // 2. 因为事件频繁触发，因此做了防抖处理
+      this.getOffsetTops();
+    },
+    navItemClick(index) {
+      this.$refs.detailScroll.scrollTo(0, -this.navOffsetTops[index], 200);
+    },
+    scroll(pos) {
+      const scrollY = -pos.y;
+      const len = this.navOffsetTops.length;
+      for (let i = 0; i < len; i++) {
+        if (
+          this.currentIndex !== i &&
+          (i < len - 1 &&
+            scrollY >= this.navOffsetTops[i] &&
+            scrollY < this.navOffsetTops[i + 1]) ||
+          (i === len - 1 && scrollY >= this.navOffsetTops[i])
+        ) {
+          this.currentIndex = i;
+          this.$refs.detailNavBar.currentIndex = this.currentIndex
+        }
+      }
+    },
+  },
+};
 </script>
 
 <style scoped>
@@ -106,5 +194,7 @@ export default {
   overflow: hidden;
   /* better-scroll的必须给定一个确定的高度 */
   height: calc(100% - 44px);
+  /* 当触控事件发生在元素上时，不进行任何操作 */
+  touch-action: none;
 }
 </style>

@@ -39,6 +39,7 @@ export default {
     clickNavItem (index) {
       console.log(index)
       this.currentIndex = index
+      this.$emit('navItemClick', index)
     },
     back () {
       this.$router.go(-1)

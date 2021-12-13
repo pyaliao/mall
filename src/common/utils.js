@@ -10,6 +10,7 @@ export function debounce (func, delay) {
   }
 }
 
+// 此函数还可以继续扩展
 export function formatDate (date, fmt) {
   // 匹配年份
   if (/(y+)/.test(fmt)) {
@@ -31,6 +32,5 @@ export function formatDate (date, fmt) {
       fmt = fmt.replace(RegExp.$1, (RegExp.$1.length === 1) ? tmp : ('00' + tmp).substr(tmp.length))
     }
   }
-  console.log(fmt)
   return fmt
 }

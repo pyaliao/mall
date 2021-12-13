@@ -1,13 +1,13 @@
 <template>
-  <div class="commentWrapper">
+  <div class="commentWrapper" >
     <div class="top">
       <div class="title">用户评价</div>
       <div class="more">更多</div>
     </div>
     <div class="commentContBox"  v-if="comment.info">
       <div class="userInfo">
-        <img :src="comment.info.user.avatar" alt="" srcset="">
-        <span class="userName">{{comment.info.user.uname}}</span>
+        <img :src="comment.info.user && comment.info.user.avatar" alt="" srcset="">
+        <span class="userName">{{comment.info.user && comment.info.user.uname}}</span>
       </div>
       <div class="comment">
         {{comment.info.content}}
@@ -45,12 +45,11 @@ export default {
       if (!value) {
         return ''
       }
-      return formatDate(new Date(value * 1000), 'yyyy-MM-dd')
+      return formatDate(new Date(value * 1000), 'yyyy-MM-dd hh:mm:ss')
     }
   },
   watch: {
     comment () {
-      console.log('----comment--------------', this.comment)
     }
   }
 }
@@ -78,7 +77,7 @@ export default {
   align-items: center;
 }
 .userInfo img {
-  width: 50px;
+  width: 45px;
   border-radius: 50%;
   margin-right: 20px;
 }
@@ -87,13 +86,23 @@ export default {
 }
 .comment {
   margin: 15px 0;
+  font-size: 14px;
 }
 .images {
   display: flex;
   flex-wrap: wrap;
-
+  margin-top: 15px;
 }
 .images  > img {
   width: 24%;
+  margin-right: 10px;
+  object-fit: cover;
+}
+.dateTime {
+  font-size: 12px;
+  color: #aaa;
+}
+.dateTime span {
+  margin-right: 10px;
 }
 </style>
