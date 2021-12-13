@@ -53,3 +53,10 @@ export class GoodsParams {
     this.rule = rule.tables
   }
 }
+
+// 处理用户评论信息
+export class GoodsComment {
+  constructor (rate) {
+    this.info = rate.cRate ? rate.list[0] : []
+  }
+}

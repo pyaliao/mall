@@ -9,6 +9,7 @@
       <detail-shop :shop="shop"></detail-shop>
       <detail-goods-detail :detail="detail" @imgLoad="goodsDetailImgLoad"></detail-goods-detail>
       <detail-goods-params :params="params"></detail-goods-params>
+      <detail-comment :comment="comment"></detail-comment>
     </scroll>
   </div>
 </template>
@@ -22,8 +23,9 @@ import DetailGoodsIntro from './childComponents/DetailGoodsIntro'
 import DetailShop from './childComponents/DetailShop'
 import DetailGoodsDetail from './childComponents/DetailGoodsDetail'
 import DetailGoodsParams from './childComponents/DetailParams'
+import DetailComment from './childComponents/DetailComment'
 
-import { getDetailData, Goods, Shop, GoodsDetail, GoodsParams } from 'network/detail'
+import { getDetailData, Goods, Shop, GoodsDetail, GoodsParams, GoodsComment } from 'network/detail'
 
 export default {
   name: 'Detail',
@@ -34,7 +36,8 @@ export default {
     DetailGoodsIntro,
     DetailShop,
     DetailGoodsDetail,
-    DetailGoodsParams
+    DetailGoodsParams,
+    DetailComment
   },
   data () {
     return {
@@ -42,7 +45,8 @@ export default {
       goods: {},
       shop: {},
       detail: {},
-      params: {}
+      params: {},
+      comment: {}
     }
   },
   props: {
@@ -75,6 +79,9 @@ export default {
 
         // 4. 获取商品参数信息
         this.params = new GoodsParams(data.itemParams.info, data.itemParams.rule)
+
+        // 6. 获取用户评论信息
+        this.comment = new GoodsComment(data.rate)
       })
       .catch()
     },

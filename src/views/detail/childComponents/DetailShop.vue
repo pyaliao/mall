@@ -25,48 +25,6 @@
         </div>
       </div>
     </div>
-    <div class="shopBottom">
-      <div class="left">
-        <div class="sellsCount">
-          <div class="count">{{shop.cSells}}</div>
-          <div class="name">总销量</div>
-        </div>
-        <div class="goodsCount">
-          <div class="count">{{shop.cGoods}}</div>
-          <div class="name">全部宝贝</div>
-        </div>
-      </div>
-      <div class="right">
-        <div class="scoresInfo" v-if="shop.score">
-          <div class="scoresItem" v-for="item, index in shop.score" :key="index">
-            <span class="name">{{item.name}}</span>
-            <span class="score" :class="{better: item.isBetter}">{{item.score}}</span>
-            <span class="real" :class="{better: item.isBetter}">{{item.isBetter ? '高' : '低'}}</span>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="shopBottom">
-      <div class="left">
-        <div class="sellsCount">
-          <div class="count">{{shop.cSells}}</div>
-          <div class="name">总销量</div>
-        </div>
-        <div class="goodsCount">
-          <div class="count">{{shop.cGoods}}</div>
-          <div class="name">全部宝贝</div>
-        </div>
-      </div>
-      <div class="right">
-        <div class="scoresInfo" v-if="shop.score">
-          <div class="scoresItem" v-for="item, index in shop.score" :key="index">
-            <span class="name">{{item.name}}</span>
-            <span class="score" :class="{better: item.isBetter}">{{item.score}}</span>
-            <span class="real" :class="{better: item.isBetter}">{{item.isBetter ? '高' : '低'}}</span>
-          </div>
-        </div>
-      </div>
-    </div>
   </div>
 </template>
 
@@ -139,5 +97,5 @@ export default {
 .scoresItem .score.better,
 .scoresItem .real.better {
   color: rgb(241, 62, 58);
-} 
+}
 </style>

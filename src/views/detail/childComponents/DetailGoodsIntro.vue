@@ -5,13 +5,13 @@
       <span>
         <span class="price">{{goods.realPrice}}<span class="oldPrice">{{goods.oldPrice}}</span></span>
       </span>
-      <span class="discount" :style="{background: goods.discountBgColor}">{{goods.discount}}</span>
+      <span v-if="goods.discount" class="discount" :style="{background: goods.discountBgColor}">{{goods.discount}}</span>
     </div>
     <div class="columns">
       <span class="columnsItem">{{goods.columns && goods.columns[0]}}</span>
       <span class="columnsItem">{{goods.columns && goods.columns[1]}}</span>
       <span class="columnsItem" v-if="goods.services">
-        <img :src="goods.services[goods.services.length - 1].icon" /> 
+        <img :src="goods.services[goods.services.length - 1].icon" />
         {{goods.services[goods.services.length - 1].name}}
       </span>
     </div>
