@@ -4,9 +4,9 @@
     <nav-bar class="nav-bar-home">
       <template #center>蘑菇街</template>
     </nav-bar>
-    <tab-control :titles="titles" 
-                class="topTabControl" 
-                @changeTab="changeTab" 
+    <tab-control :titles="titles"
+                class="topTabControl"
+                @changeTab="changeTab"
                 ref="topTabControl"
                 v-show="isFixed" >
     </tab-control>
@@ -19,7 +19,7 @@
             @scroll="contentScroll"
             @pullupload="loadMore"
             >
-      
+
       <home-swiper :banner="banner" @swiperImgLoad="swiperImgLoad" ></home-swiper>
       <home-recommend :recommend="recommend"></home-recommend>
       <home-feature></home-feature>
@@ -36,7 +36,6 @@ import NavBar from 'components/common/navbar/NavBar'
 import Scroll from 'components/common/scroll/Scroll'
 import TabControl from 'components/content/tabControl/TabControl'
 import GoodsList from 'components/content/goodsList/GoodsList'
-import BackTopBtn from 'components/content/backTopBtn/BackTopBtn'
 
 import HomeSwiper from './childComponents/HomeSwiper'
 import HomeRecommend from "./childComponents/HomeRecommend"
@@ -45,7 +44,7 @@ import HomeFeature from './childComponents/HomeFeature'
 
 import { getHomeData } from 'network/home'
 import { getGoodsData } from 'network/home'
-import { mixin } from 'common/mixin'
+import { mixin, backTopMixin } from 'common/mixin'
 
 
 
@@ -55,12 +54,11 @@ export default {
     Scroll,
     TabControl,
     GoodsList,
-    BackTopBtn,
     HomeSwiper,
     HomeRecommend,
     HomeFeature,
   },
-  mixins: [mixin],
+  mixins: [mixin, backTopMixin],
   data () {
     return {
       banner: [],
@@ -81,7 +79,6 @@ export default {
         }
       },
       currentType: 'pop',
-      showBackTopBtn: false,
       tabControlOffsetTop: 0,
       isFixed: false,
       savedY: 0,
@@ -152,17 +149,11 @@ export default {
       this.$refs.topTabControl.currentIndex = index
       this.$refs.tabControl.currentIndex = index
     },
-    backTop () {
-      this.$refs.homeScroll.scrollTo(0, 0, 300)
-    },
     contentScroll (pos) {
-
       // 1. 显示或者隐藏返回顶部按钮
-      this.showBackTopBtn = Math.abs(pos.y) >= 1000 ? true : false
-
+      this.listenShowBackTopBtn(pos)
       // 2. 滚动距离大于一定距离就让tabControl吸顶
       this.isFixed = Math.abs(pos.y) >= this.tabControlOffsetTop ? true : false
-
     },
     loadMore () {
       this.getGoodsData(this.currentType)
@@ -174,7 +165,8 @@ export default {
     swiperImgLoad () {
       console.log('jinlail')
       this.getTabControlOffsetTop()
-    }
+    },
+
   }
 }
 </script>

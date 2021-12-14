@@ -19,20 +19,23 @@
       <detail-comment ref="comment" :comment="comment"></detail-comment>
       <goods-list ref="recommend" :goods-list="recommend"></goods-list>
     </scroll>
+    <detail-bottom-bar></detail-bottom-bar>
+    <back-top-btn @click.native="backTop" v-show="showBackTopBtn"></back-top-btn>
   </div>
 </template>
 
 <script>
-import Scroll from "components/common/scroll/Scroll";
-import GoodsList from "components/content/goodsList/GoodsList";
+import Scroll from "components/common/scroll/Scroll"
+import GoodsList from "components/content/goodsList/GoodsList"
 
-import DetailNavBar from "./childComponents/DetailNavBar";
-import DetailSwiper from "./childComponents/DetailSwiper";
-import DetailGoodsIntro from "./childComponents/DetailGoodsIntro";
-import DetailShop from "./childComponents/DetailShop";
-import DetailGoodsDetail from "./childComponents/DetailGoodsDetail";
-import DetailGoodsParams from "./childComponents/DetailParams";
-import DetailComment from "./childComponents/DetailComment";
+import DetailNavBar from "./childComponents/DetailNavBar"
+import DetailSwiper from "./childComponents/DetailSwiper"
+import DetailGoodsIntro from "./childComponents/DetailGoodsIntro"
+import DetailShop from "./childComponents/DetailShop"
+import DetailGoodsDetail from "./childComponents/DetailGoodsDetail"
+import DetailGoodsParams from "./childComponents/DetailParams"
+import DetailComment from "./childComponents/DetailComment"
+import DetailBottomBar from './childComponents/DetailBottomBar'
 
 import {
   getDetailData,
@@ -42,9 +45,11 @@ import {
   GoodsDetail,
   GoodsParams,
   GoodsComment,
-} from "network/detail";
-import { mixin } from "common/mixin";
-import { debounce } from "common/utils";
+} from "network/detail"
+
+import { mixin, backTopMixin } from "common/mixin"
+import { debounce } from "common/utils"
+import { BACK_TO_POSITION } from 'common/const'
 
 export default {
   name: "Detail",
@@ -58,8 +63,9 @@ export default {
     DetailGoodsDetail,
     DetailGoodsParams,
     DetailComment,
+    DetailBottomBar,
   },
-  mixins: [mixin],
+  mixins: [mixin, backTopMixin],
   data() {
     return {
       topSwiperImages: [],
@@ -93,7 +99,6 @@ export default {
       this.navOffsetTops[1] = this.$refs.params.$el.offsetTop;
       this.navOffsetTops[2] = this.$refs.comment.$el.offsetTop;
       this.navOffsetTops[3] = this.$refs.recommend.$el.offsetTop;
-      console.log(this.navOffsetTops);
     });
   },
   mounted() {},
@@ -162,11 +167,13 @@ export default {
       this.$refs.detailScroll.scrollTo(0, -this.navOffsetTops[index], 200);
     },
     scroll(pos) {
+      // 每次滚动都会触发，每次触发都会遍历一遍
+      // 1. 获取滚动值，通过判断选择相应的标签
       const scrollY = -pos.y;
       const len = this.navOffsetTops.length;
       for (let i = 0; i < len; i++) {
         if (
-          this.currentIndex !== i &&
+          (this.currentIndex !== i) &&
           (i < len - 1 &&
             scrollY >= this.navOffsetTops[i] &&
             scrollY < this.navOffsetTops[i + 1]) ||
@@ -176,6 +183,8 @@ export default {
           this.$refs.detailNavBar.currentIndex = this.currentIndex
         }
       }
+      // 2. 显示或者隐藏返回顶部按钮
+      this.listenShowBackTopBtn(pos)
     },
   },
 };
@@ -193,7 +202,7 @@ export default {
   position: relative;
   overflow: hidden;
   /* better-scroll的必须给定一个确定的高度 */
-  height: calc(100% - 44px);
+  height: calc(100% - 44px - 60px);
   /* 当触控事件发生在元素上时，不进行任何操作 */
   touch-action: none;
 }
