@@ -6,7 +6,9 @@ module.exports = {
       .set('assets', '@/assets')
       .set('common', '@/common')
       .set('components', '@/components')
-      .set('views', '@/views')
       .set('network', '@/network')
+      .set('router', '@/router')
+      .set('store', '@/store')
+      .set('views', '@/views')
   }
 }

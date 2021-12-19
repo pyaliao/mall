@@ -8,6 +8,9 @@
       @scroll="scroll"
       :probe-type="3"
     >
+      <div>
+        {{this.$store.state.cartList}}
+      </div>
       <detail-swiper ref="swiper" :images="topSwiperImages"></detail-swiper>
       <detail-goods-intro :goods="goods"></detail-goods-intro>
       <detail-shop :shop="shop"></detail-shop>
@@ -19,7 +22,7 @@
       <detail-comment ref="comment" :comment="comment"></detail-comment>
       <goods-list ref="recommend" :goods-list="recommend"></goods-list>
     </scroll>
-    <detail-bottom-bar></detail-bottom-bar>
+    <detail-bottom-bar @addToCart="addToCart"></detail-bottom-bar>
     <back-top-btn @click.native="backTop" v-show="showBackTopBtn"></back-top-btn>
   </div>
 </template>
@@ -49,7 +52,6 @@ import {
 
 import { mixin, backTopMixin } from "common/mixin"
 import { debounce } from "common/utils"
-import { BACK_TO_POSITION } from 'common/const'
 
 export default {
   name: "Detail",
@@ -129,7 +131,7 @@ export default {
           // 4. 获取商品详情
           this.detail = new GoodsDetail(data.detailInfo);
 
-          // 4. 获取商品参数信息
+          // 5. 获取商品参数信息
           this.params = new GoodsParams(
             data.itemParams.info,
             data.itemParams.rule
@@ -180,12 +182,29 @@ export default {
           (i === len - 1 && scrollY >= this.navOffsetTops[i])
         ) {
           this.currentIndex = i;
+          // 通过this.$refs.compname获取子组件实例，然后直接修改子组件中的data变量
           this.$refs.detailNavBar.currentIndex = this.currentIndex
         }
       }
       // 2. 显示或者隐藏返回顶部按钮
       this.listenShowBackTopBtn(pos)
     },
+    addToCart () {
+      // 获取购物车要展示的信息
+      // 1. 获取商品图片
+      // 2. 获取商品title
+      // 3. 获取商品desc
+      // 4. 获取商品价格
+      // 5. 获取商品数量
+      const goods = {
+        image: this.topSwiperImages[0],
+        title: this.goods.title,
+        desc: this.goods.desc,
+        price: this.goods.realPrice,
+        iid: this.iid
+      }
+      this.$store.dispatch('addToCart', goods)
+    }
   },
 };
 </script>

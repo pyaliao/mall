@@ -15,7 +15,6 @@
             :probe-type="3"
             :listen-scroll="true"
             :pullup="true"
-            :content-data="currentGoodsList"
             @scroll="contentScroll"
             @pullupload="loadMore"
             >

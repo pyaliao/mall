@@ -19,7 +19,7 @@ export const mixin = {
     this.$bus.$on('imgLoaded', this.imgLoadedHandler)
   }
 }
-
+// 返回顶部按钮相关功能混入
 export const backTopMixin = {
   components: {
     BackTopBtn
