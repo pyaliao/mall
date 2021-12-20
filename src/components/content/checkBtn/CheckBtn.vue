@@ -1,5 +1,5 @@
 <template>
-  <div class="checkBtn" :class="{checked: isChecked}" @click="clickBtn">
+  <div class="checkBtn" :class="{checked: isChecked}">
     <img src="~assets/img/cart/tick.svg" alt="">
   </div>
 </template>
@@ -10,18 +10,19 @@ export default {
   props: {
     isChecked: {
       type: Boolean,
-      default: false
+      default: true
     }
   },
   computed: {
-    bg () {
-     console.log('-----', this.isChecked);
-      return this.isChecked ? {backgound: 'var(--color-tint)'} : {backgound: '#fff'}
+    bgColor () {
+      // 一定要注意拼写，background拼写错误找了半天
+      return this.isChecked ? {background: 'var(--color-tint)'} : {background: '#fff'}
     }
   },
   methods: {
     clickBtn () {
       this.isChecked = !this.isChecked
+      console.log(this.bgColor);
     }
   }
 }

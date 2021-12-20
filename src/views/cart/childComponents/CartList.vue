@@ -15,7 +15,7 @@ import { mapGetters } from 'vuex'
 export default {
   name: 'CartList',
   components: {
-    CartListItem
+    CartListItem,
   },
   computed: {
     ...mapGetters(['cartList'])

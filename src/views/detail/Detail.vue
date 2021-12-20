@@ -8,9 +8,6 @@
       @scroll="scroll"
       :probe-type="3"
     >
-      <div>
-        {{this.$store.state.cartList}}
-      </div>
       <detail-swiper ref="swiper" :images="topSwiperImages"></detail-swiper>
       <detail-goods-intro :goods="goods"></detail-goods-intro>
       <detail-shop :shop="shop"></detail-shop>
@@ -22,22 +19,24 @@
       <detail-comment ref="comment" :comment="comment"></detail-comment>
       <goods-list ref="recommend" :goods-list="recommend"></goods-list>
     </scroll>
-    <detail-bottom-bar @addToCart="addToCart"></detail-bottom-bar>
+    <detail-bottom-bar @addToCart="clickAddToCart"></detail-bottom-bar>
     <back-top-btn @click.native="backTop" v-show="showBackTopBtn"></back-top-btn>
+    <toast :tips="tips" v-show="showToast" class="detailToast"></toast>
   </div>
 </template>
 
 <script>
-import Scroll from "components/common/scroll/Scroll"
-import GoodsList from "components/content/goodsList/GoodsList"
+import Scroll from 'components/common/scroll/Scroll'
+import Toast from 'components/common/toast/Toast'
+import GoodsList from 'components/content/goodsList/GoodsList'
 
-import DetailNavBar from "./childComponents/DetailNavBar"
-import DetailSwiper from "./childComponents/DetailSwiper"
-import DetailGoodsIntro from "./childComponents/DetailGoodsIntro"
-import DetailShop from "./childComponents/DetailShop"
-import DetailGoodsDetail from "./childComponents/DetailGoodsDetail"
-import DetailGoodsParams from "./childComponents/DetailParams"
-import DetailComment from "./childComponents/DetailComment"
+import DetailNavBar from './childComponents/DetailNavBar'
+import DetailSwiper from './childComponents/DetailSwiper'
+import DetailGoodsIntro from './childComponents/DetailGoodsIntro'
+import DetailShop from './childComponents/DetailShop'
+import DetailGoodsDetail from './childComponents/DetailGoodsDetail'
+import DetailGoodsParams from './childComponents/DetailParams'
+import DetailComment from './childComponents/DetailComment'
 import DetailBottomBar from './childComponents/DetailBottomBar'
 
 import {
@@ -48,15 +47,18 @@ import {
   GoodsDetail,
   GoodsParams,
   GoodsComment,
-} from "network/detail"
+} from 'network/detail'
 
-import { mixin, backTopMixin } from "common/mixin"
-import { debounce } from "common/utils"
+import { mixin, backTopMixin } from 'common/mixin'
+import { debounce } from 'common/utils'
+
+import { mapActions } from 'vuex'
 
 export default {
-  name: "Detail",
+  name: 'Detail',
   components: {
     Scroll,
+    Toast,
     GoodsList,
     DetailNavBar,
     DetailSwiper,
@@ -78,16 +80,18 @@ export default {
       comment: {},
       recommend: [],
       navOffsetTops: [],
-      scrollName: "detailScroll",
+      scrollName: 'detailScroll',
       getOffsetTops: null,
       currentIndex: 0,
-      msg: "-------在详情页监听加载事件",
+      msg: '-------在详情页监听加载事件',
+      tips: '',
+      showToast: false
     };
   },
   props: {
     iid: {
       type: String,
-      default: "",
+      default: '',
     },
   },
   created() {
@@ -107,9 +111,11 @@ export default {
   // 因为detail组件没有keep-alive，因此使用destroy钩子取消事件监听
   destroyed() {
     // 组件失活时解除事件监听
-    this.$bus.$off("imgLoaded", this.imgLoadedHandler);
+    this.$bus.$off('imgLoaded', this.imgLoadedHandler);
   },
   methods: {
+    // 将actions处理函数映射到组件方法中
+    ...mapActions(['addToCart']),
     getDetailData(iid) {
       getDetailData(iid)
         .then((res) => {
@@ -189,7 +195,7 @@ export default {
       // 2. 显示或者隐藏返回顶部按钮
       this.listenShowBackTopBtn(pos)
     },
-    addToCart () {
+    clickAddToCart () {
       // 获取购物车要展示的信息
       // 1. 获取商品图片
       // 2. 获取商品title
@@ -203,7 +209,16 @@ export default {
         price: this.goods.realPrice,
         iid: this.iid
       }
-      this.$store.dispatch('addToCart', goods)
+      // 分发actions事件
+      this.addToCart(goods).then(res => {
+        console.log(res)
+        this.showToast = true
+        this.tips = res
+        setTimeout(() => {
+          this.showToast = false
+          this.tips = ''
+        }, 1000);
+      })
     }
   },
 };
@@ -224,5 +239,12 @@ export default {
   height: calc(100% - 44px - 60px);
   /* 当触控事件发生在元素上时，不进行任何操作 */
   touch-action: none;
+}
+.detailToast {
+  position: fixed;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 1000;
 }
 </style>

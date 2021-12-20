@@ -9,6 +9,7 @@
             ref="cartScroll">
       <cart-list></cart-list>
     </scroll>
+    <cart-bottom-bar></cart-bottom-bar>
   </div>
 </template>
 
@@ -16,6 +17,7 @@
 import NavBar from 'components/common/navbar/NavBar'
 import Scroll from 'components/common/scroll/Scroll'
 
+import CartBottomBar from './childComponents/CartBottomBar'
 import CartList from './childComponents/CartList'
 
 import { mapGetters } from 'vuex'
@@ -33,7 +35,8 @@ export default {
   components: {
     NavBar,
     Scroll,
-    CartList
+    CartList,
+    CartBottomBar
   },
   activated () { // 被keep-alive缓存的组件激活时调用
     // 组件激活时滚动到保存的距离，然后刷新better-scroll
@@ -61,7 +64,7 @@ export default {
   position: relative;
   overflow: hidden;
   /* better-scroll的必须给定一个确定的高度 */
-  height: calc(100% - 93px);
+  height: calc(100% - 93px - 44px);
   /* 当触控事件发生在元素上时，不进行任何操作 */
   touch-action: none;
 }

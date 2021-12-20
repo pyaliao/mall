@@ -1,7 +1,7 @@
 <template>
-  <div class="cartListItem">
+  <div class="cartListItem" @click="clickItem">
     <div class="checkBtnBox">
-      <check-btn :is-checked="isChecked"></check-btn>
+      <check-btn :is-checked="product.isChecked"></check-btn>
     </div>
     <div class="contBox">
       <img :src="product.image" alt="" srcset="">
@@ -24,7 +24,7 @@ export default {
   name: 'CartListItem',
   data () {
     return {
-      isChecked: false
+      
     }
   },
   components: {
@@ -38,8 +38,10 @@ export default {
       }
     }
   },
-  mounted () {
-    console.log(this.product)
+  methods: {
+    clickItem () {
+      this.product.isChecked = !this.product.isChecked
+    }
   }
 }
 </script>
