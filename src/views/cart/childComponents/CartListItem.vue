@@ -24,7 +24,7 @@ export default {
   name: 'CartListItem',
   data () {
     return {
-      
+
     }
   },
   components: {
@@ -59,6 +59,7 @@ export default {
 }
 .contBox {
   display: flex;
+  align-items: center;
   overflow: hidden;
 }
 .contBox img {
@@ -71,6 +72,7 @@ export default {
   overflow: hidden;
   margin-left: 20px;
   position: relative;
+  min-height: 120px;
 }
 .title,
 .desc {

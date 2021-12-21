@@ -21,13 +21,11 @@
     </scroll>
     <detail-bottom-bar @addToCart="clickAddToCart"></detail-bottom-bar>
     <back-top-btn @click.native="backTop" v-show="showBackTopBtn"></back-top-btn>
-    <toast :tips="tips" v-show="showToast" class="detailToast"></toast>
   </div>
 </template>
 
 <script>
 import Scroll from 'components/common/scroll/Scroll'
-import Toast from 'components/common/toast/Toast'
 import GoodsList from 'components/content/goodsList/GoodsList'
 
 import DetailNavBar from './childComponents/DetailNavBar'
@@ -58,7 +56,6 @@ export default {
   name: 'Detail',
   components: {
     Scroll,
-    Toast,
     GoodsList,
     DetailNavBar,
     DetailSwiper,
@@ -84,8 +81,6 @@ export default {
       getOffsetTops: null,
       currentIndex: 0,
       msg: '-------在详情页监听加载事件',
-      tips: '',
-      showToast: false
     };
   },
   props: {
@@ -211,13 +206,8 @@ export default {
       }
       // 分发actions事件
       this.addToCart(goods).then(res => {
-        console.log(res)
-        this.showToast = true
-        this.tips = res
-        setTimeout(() => {
-          this.showToast = false
-          this.tips = ''
-        }, 1000);
+        // 直接调用toast插件
+        this.$toast.show(res)
       })
     }
   },
@@ -239,12 +229,5 @@ export default {
   height: calc(100% - 44px - 60px);
   /* 当触控事件发生在元素上时，不进行任何操作 */
   touch-action: none;
-}
-.detailToast {
-  position: fixed;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
-  z-index: 1000;
 }
 </style>

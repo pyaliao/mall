@@ -10,7 +10,7 @@
         <span>¥{{sum}}</span>
       </div>
     </div>
-    <div class="right">
+    <div class="right" @click="goAfford">
       去结算({{count}})
     </div>
   </div>
@@ -66,6 +66,14 @@ export default {
         this.cartList.forEach(item => {
           item.isChecked = true
         })
+      }
+    },
+    goAfford () {
+      if (!this.isAllSelected) {
+        // 直接调用toast插件
+        this.$toast.show('请选择所有商品')
+      } else {
+        this.$toast.show('已经选择所有商品')
       }
     }
   }
